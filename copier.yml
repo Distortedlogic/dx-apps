@@ -37,15 +37,6 @@ author_name:
   help: Package author
   default: Jeremy Meek
 
-license:
-  type: str
-  help: Project license
-  choices:
-    Dual MIT or Apache-2.0: MIT OR Apache-2.0
-    MIT: MIT
-    Apache-2.0: Apache-2.0
-  default: MIT OR Apache-2.0
-
 app_type:
   type: str
   help: Dioxus application type
