@@ -8,7 +8,7 @@ rust-version = "1.98.1"
 version = "0.1.0"
 
 [dependencies]
-dioxus = { version = "=0.7.10", features = ["asset", "router"{% if app_type == "fullstack" %}, "fullstack"{% endif %}] }
+dioxus = { version = "=0.7.10"{% if app_type == "fullstack" %}, features = ["fullstack"]{% endif %} }
 
 [features]
 default = ["{% if app_type == "fullstack" %}web{% else %}{{ app_type }}{% endif %}"]

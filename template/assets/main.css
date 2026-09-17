@@ -46,21 +46,7 @@ h1 {
   line-height: 1;
 }
 
-.description {
-  margin: 1.5rem 0 0;
-  color: #cbd5e1;
-  font-size: 1.125rem;
-  line-height: 1.7;
-}
-
 .server-status {
   margin: 1rem 0 0;
   color: #86efac;
-}
-
-.route-link {
-  display: inline-block;
-  margin-top: 1.5rem;
-  color: #38bdf8;
-  font-weight: 700;
 }

@@ -1,43 +1,22 @@
 use dioxus::prelude::*;
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
-#[derive(Clone, Debug, PartialEq, Routable)]
-enum Route {
-  #[route("/")]
-  Home {},
-  #[route("/:..route")]
-  NotFound { route: Vec<String> },
-}
 {% if app_type == "fullstack" %}
 
-#[server]
-async fn server_status() -> Result<String, ServerFnError> {
+#[get("/api/status")]
+async fn server_status() -> Result<String> {
   Ok("Dioxus server is ready.".to_string())
 }
 {% endif %}
 
 #[component]
 pub fn App() -> Element {
+{% if app_type == "fullstack" %}
+  let server_message = use_loader(server_status)?;
+{% endif %}
   rsx! {
     document::Title { {{ project_name | tojson }} }
     document::Stylesheet { href: MAIN_CSS }
-    Router::<Route> {}
-  }
-}
-
-#[component]
-fn Home() -> Element {
-{% if app_type == "fullstack" %}
-  let mut server_message = use_signal(|| "Contacting server...".to_string());
-  let _server_status = use_future(move || async move {
-    let message = match server_status().await {
-      Ok(message) => message,
-      Err(error) => format!("Server error: {error}"),
-    };
-    server_message.set(message);
-  });
-{% endif %}
-  rsx! {
     main { class: "app-shell",
       section { class: "hero",
         p { class: "eyebrow", "Dioxus 0.7" }
@@ -45,19 +24,6 @@ fn Home() -> Element {
 {% if app_type == "fullstack" %}
         p { class: "server-status", "{server_message}" }
 {% endif %}
-      }
-    }
-  }
-}
-#[component]
-fn NotFound(route: Vec<String>) -> Element {
-  rsx! {
-    main { class: "app-shell",
-      section { class: "hero",
-        p { class: "eyebrow", "404" }
-        h1 { "Page not found" }
-        p { class: "description", {format!("No page exists at /{}.", route.join("/"))} }
-        Link { class: "route-link", to: Route::Home {}, "Return home" }
       }
     }
   }
