@@ -23,20 +23,6 @@ project_description:
   help: Short application description
   default: A Dioxus application
 
-repository_url:
-  type: str
-  help: Source repository URL
-  default: "https://github.com/Summit-Sailors/{{ project_slug }}"
-  validator: >-
-    {% if not (repository_url | regex_search('^https://[^/]+/.+')) %}
-    Enter an HTTPS repository URL.
-    {% endif %}
-
-author_name:
-  type: str
-  help: Package author
-  default: Jeremy Meek
-
 app_type:
   type: str
   help: Dioxus application type
@@ -70,15 +56,6 @@ bundle_identifier:
     Use a reverse-domain identifier such as com.example.app.
     {% endif %}
   when: "{{ app_type in ['desktop', 'mobile'] }}"
-
-rust_version:
-  type: str
-  help: Rust toolchain version
-  default: 1.97.0
-  validator: >-
-    {% if not (rust_version | regex_search('^[0-9]+\.[0-9]+\.[0-9]+$')) %}
-    Use a complete Rust version such as 1.97.0.
-    {% endif %}
 
 _message_after_copy: |
   {{ project_name }} is ready. Run `just serve` in the generated directory.

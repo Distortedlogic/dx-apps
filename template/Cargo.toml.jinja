@@ -1,11 +1,10 @@
 [package]
-authors = [{{ author_name | tojson }}]
+authors = ["Jeremy Meek"]
 description = {{ project_description | tojson }}
 edition = "2024"
 name = {{ project_slug | tojson }}
 publish = false
-repository = {{ repository_url | tojson }}
-rust-version = {{ rust_version | tojson }}
+rust-version = "1.97.0"
 version = "0.1.0"
 
 [dependencies]
