@@ -8,12 +8,34 @@ serve:
 
 build:
     dx build --platform {% if app_type == "fullstack" %}web{% elif app_type == "mobile" %}{{ mobile_target }}{% else %}{{ app_type }}{% endif %}
+{% if app_type == "mobile" %}
+
+android:
+    dx serve --platform android
+
+ios:
+    dx serve --platform ios
+{% endif %}
 
 check:
+{% if app_type == "fullstack" %}
+    cargo check --target wasm32-unknown-unknown --no-default-features --features web
+    cargo check --no-default-features --features server
+{% elif app_type == "web" %}
+    cargo check --target wasm32-unknown-unknown
+{% else %}
     cargo check
+{% endif %}
 
 format:
     cargo fmt --all -- --check
 
 lint:
+{% if app_type == "fullstack" %}
+    cargo clippy --target wasm32-unknown-unknown --no-default-features --features web -- -D warnings
+    cargo clippy --no-default-features --features server -- -D warnings
+{% elif app_type == "web" %}
+    cargo clippy --target wasm32-unknown-unknown -- -D warnings
+{% else %}
     cargo clippy --all-targets -- -D warnings
+{% endif %}

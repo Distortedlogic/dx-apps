@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: {{ rust_version }}
+          components: rustfmt, clippy
+{% if app_type in ["web", "fullstack"] %}
+          targets: wasm32-unknown-unknown
+{% endif %}
+      - uses: Swatinem/rust-cache@v2
+{% if app_type == "desktop" %}
+      - name: Install desktop dependencies
+        run: sudo apt-get update && sudo apt-get install --yes libgtk-3-dev libwebkit2gtk-4.1-dev
+{% endif %}
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      - name: Check project
+        run: |
+{% if app_type == "fullstack" %}
+          cargo check --target wasm32-unknown-unknown --no-default-features --features web
+          cargo check --no-default-features --features server
+{% elif app_type == "web" %}
+          cargo check --target wasm32-unknown-unknown
+{% else %}
+          cargo check
+{% endif %}
+      - name: Run Clippy
+        run: |
+{% if app_type == "fullstack" %}
+          cargo clippy --target wasm32-unknown-unknown --no-default-features --features web -- -D warnings
+          cargo clippy --no-default-features --features server -- -D warnings
+{% elif app_type == "web" %}
+          cargo clippy --target wasm32-unknown-unknown -- -D warnings
+{% else %}
+          cargo clippy --all-targets -- -D warnings
+{% endif %}

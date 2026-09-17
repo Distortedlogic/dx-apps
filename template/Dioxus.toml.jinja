@@ -8,9 +8,14 @@ out_dir = "dist"
 title = {{ project_name | tojson }}
 
 [web.watcher]
+{% if use_router %}
 index_on_404 = true
+{% endif %}
 reload_html = true
 watch_path = ["assets", "src"]
+
+[web.wasm_opt]
+level = "z"
 {% endif %}
 {% if app_type in ["desktop", "mobile"] %}
 

@@ -7,16 +7,30 @@ project_name:
   type: str
   help: Application display name
   default: My Dioxus App
+  validator: "{% if not (project_name | trim) %}Enter an application name.{% endif %}"
 
 project_slug:
   type: str
   help: Cargo package and Dioxus application name
   default: "{{ project_name | lower | replace(' ', '-') | replace('_', '-') }}"
+  validator: >-
+    {% if not (project_slug | regex_search('^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$')) %}
+    Use lowercase ASCII letters, numbers, and single hyphens. Start with a letter.
+    {% endif %}
 
 project_description:
   type: str
   help: Short application description
   default: A Dioxus application
+
+repository_url:
+  type: str
+  help: Source repository URL
+  default: "https://github.com/Summit-Sailors/{{ project_slug }}"
+  validator: >-
+    {% if not (repository_url | regex_search('^https://[^/]+/.+')) %}
+    Enter an HTTPS repository URL.
+    {% endif %}
 
 author_name:
   type: str
@@ -25,7 +39,11 @@ author_name:
 
 license:
   type: str
-  help: SPDX license expression
+  help: Project license
+  choices:
+    Dual MIT or Apache-2.0: MIT OR Apache-2.0
+    MIT: MIT
+    Apache-2.0: Apache-2.0
   default: MIT OR Apache-2.0
 
 app_type:
@@ -37,6 +55,11 @@ app_type:
     Desktop: desktop
     Mobile: mobile
   default: web
+
+use_router:
+  type: bool
+  help: Include Dioxus Router with home and not-found routes
+  default: true
 
 mobile_target:
   type: str
@@ -51,12 +74,20 @@ bundle_identifier:
   type: str
   help: Reverse-domain bundle identifier
   default: "com.entropybender.{{ project_slug | replace('-', '') }}"
+  validator: >-
+    {% if not (bundle_identifier | regex_search('^[A-Za-z0-9]+(?:\.[A-Za-z0-9-]+)+$')) %}
+    Use a reverse-domain identifier such as com.example.app.
+    {% endif %}
   when: "{{ app_type in ['desktop', 'mobile'] }}"
 
 rust_version:
   type: str
   help: Rust toolchain version
   default: 1.97.0
+  validator: >-
+    {% if not (rust_version | regex_search('^[0-9]+\.[0-9]+\.[0-9]+$')) %}
+    Use a complete Rust version such as 1.97.0.
+    {% endif %}
 
 _message_after_copy: |
   {{ project_name }} is ready. Run `just serve` in the generated directory.

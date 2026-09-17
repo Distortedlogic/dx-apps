@@ -5,11 +5,12 @@ edition = "2024"
 license = {{ license | tojson }}
 name = {{ project_slug | tojson }}
 publish = false
+repository = {{ repository_url | tojson }}
 rust-version = {{ rust_version | tojson }}
 version = "0.1.0"
 
 [dependencies]
-dioxus = { version = "=0.7.10", features = ["asset"{% if app_type == "fullstack" %}, "fullstack"{% endif %}] }
+dioxus = { version = "=0.7.10", features = ["asset"{% if app_type == "fullstack" %}, "fullstack"{% endif %}{% if use_router %}, "router"{% endif %}] }
 
 [features]
 default = ["{% if app_type == "fullstack" %}web{% else %}{{ app_type }}{% endif %}"]
@@ -30,6 +31,10 @@ strip = true
 [profile.wasm-dev]
 inherits = "dev"
 opt-level = 1
+
+[profile.wasm-release]
+inherits = "release"
+opt-level = "z"
 {% endif %}
 {% if app_type == "fullstack" %}
 
