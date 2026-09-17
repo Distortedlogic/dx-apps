@@ -7,15 +7,11 @@ project_name:
   type: str
   help: Application display name
   default: My Dioxus App
-  validator: "{% if not (project_name | trim) %}Enter an application name.{% endif %}"
-
-project_slug:
-  type: str
-  help: Cargo package and Dioxus application name
-  default: "{{ project_name | lower | replace(' ', '-') | replace('_', '-') }}"
   validator: >-
-    {% if not (project_slug | regex_search('^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$')) %}
-    Use lowercase ASCII letters, numbers, and single hyphens. Start with a letter.
+    {% if not (project_name | trim) %}
+    Enter an application name.
+    {% elif not (project_name | regex_search('^[A-Za-z]')) %}
+    Start the application name with an ASCII letter.
     {% endif %}
 
 app_type:
@@ -28,11 +24,6 @@ app_type:
     Mobile: mobile
   default: web
 
-use_router:
-  type: bool
-  help: Include Dioxus Router with home and not-found routes
-  default: true
-
 mobile_target:
   type: str
   help: Default mobile development target
@@ -41,16 +32,6 @@ mobile_target:
     iOS: ios
   default: android
   when: "{{ app_type == 'mobile' }}"
-
-bundle_identifier:
-  type: str
-  help: Reverse-domain bundle identifier
-  default: "com.entropybender.{{ project_slug | replace('-', '') }}"
-  validator: >-
-    {% if not (bundle_identifier | regex_search('^[A-Za-z0-9]+(?:\.[A-Za-z0-9-]+)+$')) %}
-    Use a reverse-domain identifier such as com.example.app.
-    {% endif %}
-  when: "{{ app_type in ['desktop', 'mobile'] }}"
 
 _message_after_copy: |
   {{ project_name }} is ready. Run `just serve` in the generated directory.

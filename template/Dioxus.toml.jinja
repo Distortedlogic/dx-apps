@@ -1,3 +1,4 @@
+{% set project_slug = project_name | lower | regex_replace('[^a-z0-9]+', '-') | trim('-') -%}
 [application]
 asset_dir = "assets"
 name = {{ project_slug | tojson }}
@@ -8,9 +9,7 @@ out_dir = "dist"
 title = {{ project_name | tojson }}
 
 [web.watcher]
-{% if use_router %}
 index_on_404 = true
-{% endif %}
 reload_html = true
 watch_path = ["assets", "src"]
 
@@ -20,7 +19,7 @@ level = "z"
 {% if app_type in ["desktop", "mobile"] %}
 
 [bundle]
-identifier = {{ bundle_identifier | tojson }}
+identifier = "com.entropybender.{{ project_slug | replace('-', '') }}"
 name = {{ project_name | tojson }}
 publisher = "Jeremy Meek"
 version = "0.1.0"
