@@ -1,0 +1,62 @@
+_min_copier_version: "9.0.0"
+_subdirectory: template
+_templates_suffix: .jinja
+_answers_file: .copier-answers.yml
+
+project_name:
+  type: str
+  help: Application display name
+  default: My Dioxus App
+
+project_slug:
+  type: str
+  help: Cargo package and Dioxus application name
+  default: "{{ project_name | lower | replace(' ', '-') | replace('_', '-') }}"
+
+project_description:
+  type: str
+  help: Short application description
+  default: A Dioxus application
+
+author_name:
+  type: str
+  help: Package author
+  default: Jeremy Meek
+
+license:
+  type: str
+  help: SPDX license expression
+  default: MIT OR Apache-2.0
+
+app_type:
+  type: str
+  help: Dioxus application type
+  choices:
+    Web: web
+    Full-stack web: fullstack
+    Desktop: desktop
+    Mobile: mobile
+  default: web
+
+mobile_target:
+  type: str
+  help: Default mobile development target
+  choices:
+    Android: android
+    iOS: ios
+  default: android
+  when: "{{ app_type == 'mobile' }}"
+
+bundle_identifier:
+  type: str
+  help: Reverse-domain bundle identifier
+  default: "com.entropybender.{{ project_slug | replace('-', '') }}"
+  when: "{{ app_type in ['desktop', 'mobile'] }}"
+
+rust_version:
+  type: str
+  help: Rust toolchain version
+  default: 1.97.0
+
+_message_after_copy: |
+  {{ project_name }} is ready. Run `just serve` in the generated directory.

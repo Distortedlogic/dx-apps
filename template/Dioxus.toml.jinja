@@ -1,0 +1,32 @@
+[application]
+asset_dir = "assets"
+name = {{ project_slug | tojson }}
+out_dir = "dist"
+{% if app_type in ["web", "fullstack"] %}
+
+[web.app]
+title = {{ project_name | tojson }}
+
+[web.watcher]
+index_on_404 = true
+reload_html = true
+watch_path = ["assets", "src"]
+{% endif %}
+{% if app_type in ["desktop", "mobile"] %}
+
+[bundle]
+identifier = {{ bundle_identifier | tojson }}
+name = {{ project_name | tojson }}
+publisher = {{ author_name | tojson }}
+short_description = {{ project_description | tojson }}
+version = "0.1.0"
+{% endif %}
+{% if app_type == "mobile" %}
+
+[android]
+min_sdk = 26
+target_sdk = 34
+
+[ios]
+deployment_target = "15.0"
+{% endif %}

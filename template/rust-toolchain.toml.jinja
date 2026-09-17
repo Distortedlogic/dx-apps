@@ -1,0 +1,6 @@
+[toolchain]
+channel = {{ rust_version | tojson }}
+components = ["clippy", "rustfmt"]
+{% if app_type in ["web", "fullstack"] %}
+targets = ["wasm32-unknown-unknown"]
+{% endif %}

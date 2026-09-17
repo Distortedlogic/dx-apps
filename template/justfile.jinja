@@ -1,0 +1,19 @@
+set shell := ["bash", "-uc"]
+
+default:
+    @just --list
+
+serve:
+    dx serve --platform {% if app_type == "fullstack" %}web{% elif app_type == "mobile" %}{{ mobile_target }}{% else %}{{ app_type }}{% endif %}
+
+build:
+    dx build --platform {% if app_type == "fullstack" %}web{% elif app_type == "mobile" %}{{ mobile_target }}{% else %}{{ app_type }}{% endif %}
+
+check:
+    cargo check
+
+format:
+    cargo fmt --all -- --check
+
+lint:
+    cargo clippy --all-targets -- -D warnings

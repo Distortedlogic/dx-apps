@@ -1,0 +1,18 @@
+use dioxus::prelude::*;
+
+const MAIN_CSS: Asset = asset!("/assets/main.css");
+
+#[component]
+pub fn App() -> Element {
+  rsx! {
+    document::Title { {{ project_name | tojson }} }
+    document::Stylesheet { href: MAIN_CSS }
+    main { class: "app-shell",
+      section { class: "hero",
+        p { class: "eyebrow", "Dioxus 0.7" }
+        h1 { {{ project_name | tojson }} }
+        p { class: "description", {{ project_description | tojson }} }
+      }
+    }
+  }
+}

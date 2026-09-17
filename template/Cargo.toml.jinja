@@ -1,0 +1,49 @@
+[package]
+authors = [{{ author_name | tojson }}]
+description = {{ project_description | tojson }}
+edition = "2024"
+license = {{ license | tojson }}
+name = {{ project_slug | tojson }}
+publish = false
+rust-version = {{ rust_version | tojson }}
+version = "0.1.0"
+
+[dependencies]
+dioxus = { version = "=0.7.10", features = ["asset"{% if app_type == "fullstack" %}, "fullstack"{% endif %}] }
+
+[features]
+default = ["{% if app_type == "fullstack" %}web{% else %}{{ app_type }}{% endif %}"]
+{% if app_type == "fullstack" %}
+server = ["dioxus/server"]
+web = ["dioxus/web"]
+{% else %}
+{{ app_type }} = ["dioxus/{{ app_type }}"]
+{% endif %}
+
+[profile.release]
+codegen-units = 1
+lto = true
+panic = "abort"
+strip = true
+{% if app_type in ["web", "fullstack"] %}
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+{% endif %}
+{% if app_type == "fullstack" %}
+
+[profile.server-dev]
+inherits = "dev"
+{% endif %}
+{% if app_type == "mobile" %}
+
+[profile.android-dev]
+inherits = "dev"
+{% endif %}
+
+[lints.rust]
+unsafe_code = "deny"
+
+[lints.clippy]
+all = "warn"
