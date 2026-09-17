@@ -18,11 +18,6 @@ project_slug:
     Use lowercase ASCII letters, numbers, and single hyphens. Start with a letter.
     {% endif %}
 
-project_description:
-  type: str
-  help: Short application description
-  default: A Dioxus application
-
 app_type:
   type: str
   help: Dioxus application type
