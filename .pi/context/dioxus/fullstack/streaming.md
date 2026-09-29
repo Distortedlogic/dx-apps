@@ -1,7 +1,7 @@
 ---
 id: dioxus-fullstack-streaming
 title: Fullstack Streaming
-description: Streaming responses and data in full-stack Dioxus applications.
+description: Typed WebSockets, SSE, HTTP streams, file transfer, replay, and connection limits.
 ---
 
 # Full-stack streaming
