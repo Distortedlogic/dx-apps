@@ -19,24 +19,36 @@ project_slug:
   default: "{{ project_name | lower | regex_replace('[^a-z0-9]+', '-') | trim('-') }}"
   when: false
 
-app_type:
+targets:
   type: str
-  help: Dioxus application type
+  help: Dioxus render targets
   choices:
     Web: web
-    Full-stack web: fullstack
     Desktop: desktop
     Mobile: mobile
-  default: web
+  multiselect: true
+  default:
+    - web
+  validator: >-
+    {% if not targets %}
+    Select at least one render target.
+    {% endif %}
 
-mobile_target:
+fullstack:
+  type: bool
+  help: Include a Dioxus full-stack server
+  default: false
+
+capabilities:
   type: str
-  help: Default mobile development target
+  help: Application capabilities
   choices:
-    Android: android
-    iOS: ios
-  default: android
-  when: "{{ app_type == 'mobile' }}"
+    Database: database
+    Authentication: authentication
+    WebSocket: websocket
+    Charting: charting
+  multiselect: true
+  default: []
 
 _message_after_copy: |
-  {{ project_name }} is ready. Run `just serve` in the generated directory.
+  {{ project_name }} is ready. Run `just --list` in the generated directory.

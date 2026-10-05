@@ -1,39 +1,13 @@
+use crate::router::Route;
 use dioxus::prelude::*;
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
-{% if app_type == "fullstack" %}
-#[get("/api/status")]
-async fn server_status() -> Result<String> {
-  Ok("Dioxus server is ready.".to_string())
-}
 
 #[component]
 pub fn App() -> Element {
-  let server_message = use_loader(server_status)?;
   rsx! {
     document::Title { {{ project_name | tojson }} }
     document::Stylesheet { href: MAIN_CSS }
-    main { class: "app-shell",
-      section { class: "hero",
-        p { class: "eyebrow", "Dioxus 0.7" }
-        h1 { {{ project_name | tojson }} }
-        p { class: "server-status", "{server_message}" }
-      }
-    }
+    Router::<Route> {}
   }
 }
-{% else %}
-#[component]
-pub fn App() -> Element {
-  rsx! {
-    document::Title { {{ project_name | tojson }} }
-    document::Stylesheet { href: MAIN_CSS }
-    main { class: "app-shell",
-      section { class: "hero",
-        p { class: "eyebrow", "Dioxus 0.7" }
-        h1 { {{ project_name | tojson }} }
-      }
-    }
-  }
-}
-{% endif -%}

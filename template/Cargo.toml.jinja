@@ -9,14 +9,14 @@ rust-version = "1.99.0"
 version = "0.1.0"
 
 [workspace.dependencies]
-dioxus = { version = "=0.7.10"{% if app_type == "fullstack" %}, features = ["fullstack"]{% endif %} }
+dioxus = { version = "=0.7.10", features = ["router"{% if fullstack %}, "fullstack"{% endif %}] }
 
 [profile.release]
 codegen-units = 1
 lto = true
 panic = "abort"
 strip = true
-{% if app_type == "web" %}
+{% if "web" in targets %}
 [profile.wasm-dev]
 inherits = "dev"
 opt-level = 1
@@ -24,18 +24,12 @@ opt-level = 1
 [profile.wasm-release]
 inherits = "release"
 opt-level = "z"
-{% elif app_type == "fullstack" %}
-[profile.wasm-dev]
-inherits = "dev"
-opt-level = 1
-
-[profile.wasm-release]
-inherits = "release"
-opt-level = "z"
-
+{% endif %}
+{% if fullstack %}
 [profile.server-dev]
 inherits = "dev"
-{% elif app_type == "mobile" %}
+{% endif %}
+{% if "mobile" in targets %}
 [profile.android-dev]
 inherits = "dev"
 {% endif %}

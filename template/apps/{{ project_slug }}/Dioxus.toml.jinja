@@ -2,7 +2,7 @@
 asset_dir = "assets"
 name = {{ project_slug | tojson }}
 out_dir = "dist"
-{% if app_type in ["web", "fullstack"] %}
+{% if "web" in targets %}
 [web.app]
 title = {{ project_name | tojson }}
 
@@ -12,19 +12,15 @@ watch_path = ["assets", "src"]
 
 [web.wasm_opt]
 level = "z"
-{% elif app_type == "desktop" %}
+{% endif %}
+{% if "desktop" in targets or "mobile" in targets %}
 [bundle]
 identifier = "com.entropybender.{{ project_slug | replace('-', '') }}"
 name = {{ project_name | tojson }}
 publisher = "Jeremy Meek"
 version = "0.1.0"
-{% else %}
-[bundle]
-identifier = "com.entropybender.{{ project_slug | replace('-', '') }}"
-name = {{ project_name | tojson }}
-publisher = "Jeremy Meek"
-version = "0.1.0"
-
+{% endif %}
+{% if "mobile" in targets %}
 [android]
 min_sdk = 26
 target_sdk = 34

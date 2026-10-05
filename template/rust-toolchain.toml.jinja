@@ -1,4 +1,4 @@
 [toolchain]
 channel = "1.99.0"
-components = ["clippy", "rustfmt"]{% if app_type in ["web", "fullstack"] %}
+components = ["clippy", "rustfmt"]{% if "web" in targets %}
 targets = ["wasm32-unknown-unknown"]{% endif %}

@@ -3,26 +3,17 @@ set shell := ["bash", "-uc"]
 default:
     @just --list
 
-serve:
-    dx serve --package {{ project_slug }} --platform {% if app_type == "fullstack" %}web{% elif app_type == "mobile" %}{{ mobile_target }}{% else %}{{ app_type }}{% endif %}
+serve platform:
+    dx serve --package {{ project_slug }} --platform {% raw %}{{ platform }}{% endraw %}
 
-build:
-    dx build --package {{ project_slug }} --platform {% if app_type == "fullstack" %}web{% elif app_type == "mobile" %}{{ mobile_target }}{% else %}{{ app_type }}{% endif %}
-{% if app_type == "mobile" %}
+build platform:
+    dx build --package {{ project_slug }} --platform {% raw %}{{ platform }}{% endraw %}
 
-android:
-    dx serve --package {{ project_slug }} --platform android
-
-ios:
-    dx serve --package {{ project_slug }} --platform ios
-{% endif %}
-
-check:
-    cargo check --workspace --all-targets --all-features
-    dx check --package {{ project_slug }} --platform {% if app_type == "fullstack" %}web --fullstack{% elif app_type == "mobile" %}{{ mobile_target }}{% else %}{{ app_type }}{% endif %}
+check platform:
+    dx check --package {{ project_slug }} --platform {% raw %}{{ platform }}{% endraw %}{% if fullstack %} --fullstack{% endif %}
 
 format:
     cargo fmt --all -- --check
 
-lint:
-    cargo clippy --workspace --all-targets --all-features -- -D warnings
+lint feature:
+    cargo clippy --workspace --all-targets --no-default-features --features {% raw %}{{ feature }}{% endraw %} -- -D warnings

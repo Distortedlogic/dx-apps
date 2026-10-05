@@ -10,12 +10,18 @@ version.workspace = true
 dioxus = { workspace = true }
 
 [features]
-default = ["{% if app_type == "fullstack" %}web{% else %}{{ app_type }}{% endif %}"]
-{% if app_type == "fullstack" %}
-server = ["dioxus/server"]
+default = []
+{% if "web" in targets %}
 web = ["dioxus/web"]
-{% else %}
-{{ app_type }} = ["dioxus/{{ app_type }}"]
+{% endif %}
+{% if "desktop" in targets %}
+desktop = ["dioxus/desktop"]
+{% endif %}
+{% if "mobile" in targets %}
+mobile = ["dioxus/mobile"]
+{% endif %}
+{% if fullstack %}
+server = ["dioxus/server"]
 {% endif %}
 
 [lints]
