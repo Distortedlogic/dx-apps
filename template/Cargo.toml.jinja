@@ -1,31 +1,22 @@
-{% set project_slug = project_name | lower | regex_replace('[^a-z0-9]+', '-') | trim('-') -%}
-[package]
+[workspace]
+members = ["apps/{{ project_slug }}"]
+resolver = "3"
+
+[workspace.package]
 authors = ["Jeremy Meek"]
 edition = "2024"
-name = {{ project_slug | tojson }}
-publish = false
-rust-version = "1.98.1"
+rust-version = "1.99.0"
 version = "0.1.0"
 
-[dependencies]
+[workspace.dependencies]
 dioxus = { version = "=0.7.10"{% if app_type == "fullstack" %}, features = ["fullstack"]{% endif %} }
-
-[features]
-default = ["{% if app_type == "fullstack" %}web{% else %}{{ app_type }}{% endif %}"]
-{% if app_type == "fullstack" %}
-server = ["dioxus/server"]
-web = ["dioxus/web"]
-{% else %}
-{{ app_type }} = ["dioxus/{{ app_type }}"]
-{% endif %}
 
 [profile.release]
 codegen-units = 1
 lto = true
 panic = "abort"
 strip = true
-{% if app_type in ["web", "fullstack"] %}
-
+{% if app_type == "web" %}
 [profile.wasm-dev]
 inherits = "dev"
 opt-level = 1
@@ -33,20 +24,23 @@ opt-level = 1
 [profile.wasm-release]
 inherits = "release"
 opt-level = "z"
-{% endif %}
-{% if app_type == "fullstack" %}
+{% elif app_type == "fullstack" %}
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.wasm-release]
+inherits = "release"
+opt-level = "z"
 
 [profile.server-dev]
 inherits = "dev"
-{% endif %}
-{% if app_type == "mobile" %}
-
+{% elif app_type == "mobile" %}
 [profile.android-dev]
 inherits = "dev"
 {% endif %}
-
-[lints.rust]
+[workspace.lints.rust]
 unsafe_code = "deny"
 
-[lints.clippy]
+[workspace.lints.clippy]
 all = "warn"

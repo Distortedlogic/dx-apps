@@ -4,38 +4,36 @@ default:
     @just --list
 
 serve:
-    dx serve --platform {% if app_type == "fullstack" %}web{% elif app_type == "mobile" %}{{ mobile_target }}{% else %}{{ app_type }}{% endif %}
+    dx serve --package {{ project_slug }} --platform {% if app_type == "fullstack" %}web{% elif app_type == "mobile" %}{{ mobile_target }}{% else %}{{ app_type }}{% endif %}
 
 build:
-    dx build --platform {% if app_type == "fullstack" %}web{% elif app_type == "mobile" %}{{ mobile_target }}{% else %}{{ app_type }}{% endif %}
+    dx build --package {{ project_slug }} --platform {% if app_type == "fullstack" %}web{% elif app_type == "mobile" %}{{ mobile_target }}{% else %}{{ app_type }}{% endif %}
 {% if app_type == "mobile" %}
 
 android:
-    dx serve --platform android
+    dx serve --package {{ project_slug }} --platform android
 
 ios:
-    dx serve --platform ios
+    dx serve --package {{ project_slug }} --platform ios
 {% endif %}
 
-check:
-{% if app_type == "fullstack" %}
-    cargo check --target wasm32-unknown-unknown --no-default-features --features web
-    cargo check --no-default-features --features server
+check:{% if app_type == "fullstack" %}
+    cargo check --package {{ project_slug }} --target wasm32-unknown-unknown --no-default-features --features web
+    cargo check --package {{ project_slug }} --no-default-features --features server
 {% elif app_type == "web" %}
-    cargo check --target wasm32-unknown-unknown
+    cargo check --package {{ project_slug }} --target wasm32-unknown-unknown
 {% else %}
-    cargo check
+    cargo check --package {{ project_slug }}
 {% endif %}
 
 format:
     cargo fmt --all -- --check
 
-lint:
-{% if app_type == "fullstack" %}
-    cargo clippy --target wasm32-unknown-unknown --no-default-features --features web -- -D warnings
-    cargo clippy --no-default-features --features server -- -D warnings
+lint:{% if app_type == "fullstack" %}
+    cargo clippy --package {{ project_slug }} --target wasm32-unknown-unknown --no-default-features --features web -- -D warnings
+    cargo clippy --package {{ project_slug }} --no-default-features --features server -- -D warnings
 {% elif app_type == "web" %}
-    cargo clippy --target wasm32-unknown-unknown -- -D warnings
+    cargo clippy --package {{ project_slug }} --target wasm32-unknown-unknown -- -D warnings
 {% else %}
-    cargo clippy --all-targets -- -D warnings
+    cargo clippy --package {{ project_slug }} --all-targets -- -D warnings
 {% endif %}

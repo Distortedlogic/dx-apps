@@ -2,18 +2,14 @@ use dioxus::prelude::*;
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 {% if app_type == "fullstack" %}
-
 #[get("/api/status")]
 async fn server_status() -> Result<String> {
   Ok("Dioxus server is ready.".to_string())
 }
-{% endif %}
 
 #[component]
 pub fn App() -> Element {
-{% if app_type == "fullstack" %}
   let server_message = use_loader(server_status)?;
-{% endif %}
   rsx! {
     document::Title { {{ project_name | tojson }} }
     document::Stylesheet { href: MAIN_CSS }
@@ -21,10 +17,23 @@ pub fn App() -> Element {
       section { class: "hero",
         p { class: "eyebrow", "Dioxus 0.7" }
         h1 { {{ project_name | tojson }} }
-{% if app_type == "fullstack" %}
         p { class: "server-status", "{server_message}" }
-{% endif %}
       }
     }
   }
 }
+{% else %}
+#[component]
+pub fn App() -> Element {
+  rsx! {
+    document::Title { {{ project_name | tojson }} }
+    document::Stylesheet { href: MAIN_CSS }
+    main { class: "app-shell",
+      section { class: "hero",
+        p { class: "eyebrow", "Dioxus 0.7" }
+        h1 { {{ project_name | tojson }} }
+      }
+    }
+  }
+}
+{% endif -%}

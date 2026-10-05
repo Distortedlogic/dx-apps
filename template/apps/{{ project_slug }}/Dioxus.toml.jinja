@@ -1,10 +1,8 @@
-{% set project_slug = project_name | lower | regex_replace('[^a-z0-9]+', '-') | trim('-') -%}
 [application]
 asset_dir = "assets"
 name = {{ project_slug | tojson }}
 out_dir = "dist"
 {% if app_type in ["web", "fullstack"] %}
-
 [web.app]
 title = {{ project_name | tojson }}
 
@@ -14,16 +12,18 @@ watch_path = ["assets", "src"]
 
 [web.wasm_opt]
 level = "z"
-{% endif %}
-{% if app_type in ["desktop", "mobile"] %}
-
+{% elif app_type == "desktop" %}
 [bundle]
 identifier = "com.entropybender.{{ project_slug | replace('-', '') }}"
 name = {{ project_name | tojson }}
 publisher = "Jeremy Meek"
 version = "0.1.0"
-{% endif %}
-{% if app_type == "mobile" %}
+{% else %}
+[bundle]
+identifier = "com.entropybender.{{ project_slug | replace('-', '') }}"
+name = {{ project_name | tojson }}
+publisher = "Jeremy Meek"
+version = "0.1.0"
 
 [android]
 min_sdk = 26
@@ -31,4 +31,4 @@ target_sdk = 34
 
 [ios]
 deployment_target = "15.0"
-{% endif %}
+{% endif -%}

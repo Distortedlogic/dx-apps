@@ -1,0 +1,22 @@
+[package]
+authors.workspace = true
+edition.workspace = true
+name = {{ project_slug | tojson }}
+publish = false
+rust-version.workspace = true
+version.workspace = true
+
+[dependencies]
+dioxus = { workspace = true }
+
+[features]
+default = ["{% if app_type == "fullstack" %}web{% else %}{{ app_type }}{% endif %}"]
+{% if app_type == "fullstack" %}
+server = ["dioxus/server"]
+web = ["dioxus/web"]
+{% else %}
+{{ app_type }} = ["dioxus/{{ app_type }}"]
+{% endif %}
+
+[lints]
+workspace = true

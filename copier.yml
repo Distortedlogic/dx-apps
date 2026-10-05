@@ -14,6 +14,11 @@ project_name:
     Start the application name with an ASCII letter.
     {% endif %}
 
+project_slug:
+  type: str
+  default: "{{ project_name | lower | regex_replace('[^a-z0-9]+', '-') | trim('-') }}"
+  when: false
+
 app_type:
   type: str
   help: Dioxus application type
