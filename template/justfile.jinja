@@ -17,23 +17,12 @@ ios:
     dx serve --package {{ project_slug }} --platform ios
 {% endif %}
 
-check:{% if app_type == "fullstack" %}
-    cargo check --package {{ project_slug }} --target wasm32-unknown-unknown --no-default-features --features web
-    cargo check --package {{ project_slug }} --no-default-features --features server
-{% elif app_type == "web" %}
-    cargo check --package {{ project_slug }} --target wasm32-unknown-unknown
-{% else %}
-    cargo check --package {{ project_slug }}
-{% endif %}
+check:
+    cargo check --workspace --all-targets --all-features
+    dx check --package {{ project_slug }} --platform {% if app_type == "fullstack" %}web --fullstack{% elif app_type == "mobile" %}{{ mobile_target }}{% else %}{{ app_type }}{% endif %}
 
 format:
     cargo fmt --all -- --check
 
-lint:{% if app_type == "fullstack" %}
-    cargo clippy --package {{ project_slug }} --target wasm32-unknown-unknown --no-default-features --features web -- -D warnings
-    cargo clippy --package {{ project_slug }} --no-default-features --features server -- -D warnings
-{% elif app_type == "web" %}
-    cargo clippy --package {{ project_slug }} --target wasm32-unknown-unknown -- -D warnings
-{% else %}
-    cargo clippy --package {{ project_slug }} --all-targets -- -D warnings
-{% endif %}
+lint:
+    cargo clippy --workspace --all-targets --all-features -- -D warnings
