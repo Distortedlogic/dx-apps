@@ -1,0 +1,25 @@
+{% if fullstack %}mod api;
+{% endif %}mod app;
+{% if "charting" in capabilities %}mod components;
+{% endif %}mod layout;
+mod pages;
+mod router;
+{% if fullstack and "websocket" in capabilities %}
+#[cfg(feature = "server")]
+fn main() {
+  dioxus::serve(|| async {
+    use axum::routing::get;
+    let router = dioxus::server::router(app::App).route("/api/ws", get(api::websocket::server::websocket_upgrade));
+    Ok(router)
+  });
+}
+
+#[cfg(not(feature = "server"))]
+fn main() {
+  dioxus::launch(app::App);
+}
+{% else %}
+fn main() {
+  dioxus::launch(app::App);
+}
+{% endif %}

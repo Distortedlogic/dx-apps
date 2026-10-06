@@ -8,7 +8,15 @@ version.workspace = true
 
 [dependencies]
 dioxus = { workspace = true }
-
+{% if "authentication" in capabilities %}argon2 = { workspace = true, optional = true }
+{% endif %}{% if "websocket" in capabilities %}axum = { workspace = true, features = ["ws"], optional = true }
+{% endif %}{% if "database" in capabilities %}diesel = { workspace = true, optional = true }
+diesel-async = { workspace = true, optional = true }
+{% endif %}{% if "charting" in capabilities %}dx-charming = { workspace = true{% if fullstack %}, features = ["fullstack"]{% endif %} }
+{% endif %}{% if "websocket" in capabilities %}futures-util = { workspace = true, optional = true }
+{% endif %}{% if "database" in capabilities or "authentication" in capabilities or "websocket" in capabilities %}serde = { workspace = true }
+{% endif %}{% if "websocket" in capabilities %}serde_json = { workspace = true, optional = true }
+{% endif %}
 [features]
 default = []
 {% if "web" in targets %}
@@ -21,7 +29,15 @@ desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
 {% endif %}
 {% if fullstack %}
-server = ["dioxus/server"]
+server = [
+  "dioxus/server",
+{% if "authentication" in capabilities %}  "dep:argon2",
+{% endif %}{% if "websocket" in capabilities %}  "dep:axum",
+{% endif %}{% if "database" in capabilities %}  "dep:diesel",
+  "dep:diesel-async",
+{% endif %}{% if "websocket" in capabilities %}  "dep:futures-util",
+  "dep:serde_json",
+{% endif %}]
 {% endif %}
 
 [lints]

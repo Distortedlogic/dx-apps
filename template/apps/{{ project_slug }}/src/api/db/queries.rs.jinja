@@ -1,0 +1,40 @@
+use crate::api::db::connection::connection;
+use crate::api::db::models::{AppRecord, NewAppRecord};
+use crate::api::db::schema::app_records;
+use diesel::prelude::*;
+use diesel_async::RunQueryDsl;
+use dioxus::prelude::ServerFnError;
+
+pub async fn list_records() -> Result<Vec<AppRecord>, ServerFnError> {
+  let mut connection = connection().await?;
+  app_records::table.select(AppRecord::as_select()).load(&mut connection).await.map_err(ServerFnError::new)
+}
+
+pub async fn create_record(name: &str) -> Result<AppRecord, ServerFnError> {
+  let mut connection = connection().await?;
+  diesel::insert_into(app_records::table)
+    .values(NewAppRecord { name })
+    .returning(AppRecord::as_returning())
+    .get_result(&mut connection)
+    .await
+    .map_err(ServerFnError::new)
+}
+{% if "authentication" in capabilities %}
+use crate::api::db::models::{NewUserRow, UserRow};
+use crate::api::db::schema::users;
+
+pub async fn create_user(email: &str, password_hash: &str) -> Result<UserRow, ServerFnError> {
+  let mut connection = connection().await?;
+  diesel::insert_into(users::table)
+    .values(NewUserRow { email, password_hash })
+    .returning(UserRow::as_returning())
+    .get_result(&mut connection)
+    .await
+    .map_err(ServerFnError::new)
+}
+
+pub async fn find_user_by_email(email: &str) -> Result<UserRow, ServerFnError> {
+  let mut connection = connection().await?;
+  users::table.filter(users::email.eq(email)).select(UserRow::as_select()).first(&mut connection).await.map_err(ServerFnError::new)
+}
+{% endif %}

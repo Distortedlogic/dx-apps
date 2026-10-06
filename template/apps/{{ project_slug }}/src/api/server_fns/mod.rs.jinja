@@ -1,0 +1,3 @@
+{% if "authentication" in capabilities %}pub mod auth;
+{% endif %}{% if "database" in capabilities %}pub mod records;
+{% endif %}pub mod status;

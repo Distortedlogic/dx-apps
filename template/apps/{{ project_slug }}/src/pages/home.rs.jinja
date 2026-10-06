@@ -1,0 +1,16 @@
+{% if fullstack %}use crate::api::server_fns::status::server_status;
+{% endif %}{% if "charting" in capabilities %}use crate::components::charts::StarterChart;
+{% endif %}use dioxus::prelude::*;
+
+#[component]
+pub fn Home() -> Element {
+{% if fullstack %}  let server_message = use_loader(server_status)?;
+{% endif %}  rsx! {
+    section { class: "mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-20",
+      p { class: "text-sm font-semibold uppercase tracking-widest text-primary", "Dioxus 0.7" }
+      h1 { class: "text-5xl font-bold tracking-tight", {{ project_name | tojson }} }
+{% if fullstack %}      p { class: "text-success", "{server_message}" }
+{% endif %}{% if "charting" in capabilities %}      StarterChart {}
+{% endif %}    }
+  }
+}

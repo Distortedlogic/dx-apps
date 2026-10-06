@@ -1,26 +1,10 @@
+use crate::layout::Layout;
+use crate::pages::home::Home;
 use dioxus::prelude::*;
 
 #[derive(Clone, PartialEq, Eq, Routable)]
 pub enum Route {
+  #[layout(Layout)]
   #[route("/")]
   Home {},
-}
-{% if fullstack %}
-#[get("/api/status")]
-async fn server_status() -> Result<String> {
-  Ok("Dioxus server is ready.".to_string())
-}
-{% endif %}
-#[component]
-fn Home() -> Element {
-{% if fullstack %}  let server_message = use_loader(server_status)?;
-{% endif %}  rsx! {
-    main { class: "app-shell",
-      section { class: "hero",
-        p { class: "eyebrow", "Dioxus 0.7" }
-        h1 { {{ project_name | tojson }} }
-{% if fullstack %}        p { class: "server-status", "{server_message}" }
-{% endif %}      }
-    }
-  }
 }

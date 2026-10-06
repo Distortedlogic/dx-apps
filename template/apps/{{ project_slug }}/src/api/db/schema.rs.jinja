@@ -1,0 +1,15 @@
+diesel::table! {
+  app_records (id) {
+    id -> Int4,
+    name -> Text,
+  }
+}
+{% if "authentication" in capabilities %}
+diesel::table! {
+  users (id) {
+    id -> Int4,
+    email -> Text,
+    password_hash -> Text,
+  }
+}
+{% endif %}

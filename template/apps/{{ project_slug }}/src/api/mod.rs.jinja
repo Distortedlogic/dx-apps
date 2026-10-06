@@ -1,0 +1,5 @@
+{% if "authentication" in capabilities %}pub mod auth;
+{% endif %}{% if "database" in capabilities %}pub mod db;
+{% endif %}pub mod server_fns;
+{% if "websocket" in capabilities %}pub mod websocket;
+{% endif %}

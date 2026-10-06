@@ -2,6 +2,18 @@ _min_copier_version: "9.0.0"
 _subdirectory: template
 _templates_suffix: .jinja
 _answers_file: .copier-answers.yml
+_exclude:
+  - "{% if not fullstack %}apps/**/src/api/**{% else %}.copier-never{% endif %}"
+  - "{% if 'database' not in capabilities %}apps/**/src/api/db/**{% else %}.copier-never{% endif %}"
+  - "{% if 'database' not in capabilities %}apps/**/src/api/server_fns/records.rs*{% else %}.copier-never{% endif %}"
+  - "{% if 'database' not in capabilities %}diesel.toml*{% else %}.copier-never{% endif %}"
+  - "{% if 'database' not in capabilities %}migrations/**{% else %}.copier-never{% endif %}"
+  - "{% if 'authentication' not in capabilities %}apps/**/src/api/auth/**{% else %}.copier-never{% endif %}"
+  - "{% if 'authentication' not in capabilities %}apps/**/src/api/server_fns/auth.rs*{% else %}.copier-never{% endif %}"
+  - "{% if 'websocket' not in capabilities %}apps/**/src/api/websocket/**{% else %}.copier-never{% endif %}"
+  - "{% if 'charting' not in capabilities %}apps/**/src/components/**{% else %}.copier-never{% endif %}"
+_tasks:
+  - pnpm install
 
 project_name:
   type: str
@@ -49,6 +61,12 @@ capabilities:
     Charting: charting
   multiselect: true
   default: []
+  validator: >-
+    {% if not fullstack and ("database" in capabilities or "authentication" in capabilities or "websocket" in capabilities) %}
+    Database, authentication, and WebSocket capabilities require the full-stack server.
+    {% elif "authentication" in capabilities and "database" not in capabilities %}
+    Authentication requires the database capability.
+    {% endif %}
 
 _message_after_copy: |
   {{ project_name }} is ready. Run `just --list` in the generated directory.

@@ -1,0 +1,36 @@
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "server", derive(diesel::Identifiable, diesel::Queryable, diesel::Selectable))]
+#[cfg_attr(feature = "server", diesel(table_name = crate::api::db::schema::app_records))]
+#[cfg_attr(feature = "server", diesel(check_for_backend(diesel::pg::Pg)))]
+pub struct AppRecord {
+  pub id: i32,
+  pub name: String,
+}
+
+#[cfg(feature = "server")]
+#[derive(diesel::Insertable)]
+#[diesel(table_name = crate::api::db::schema::app_records)]
+pub struct NewAppRecord<'a> {
+  pub name: &'a str,
+}
+{% if "authentication" in capabilities %}
+#[cfg(feature = "server")]
+#[derive(diesel::Identifiable, diesel::Queryable, diesel::Selectable)]
+#[diesel(table_name = crate::api::db::schema::users)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct UserRow {
+  pub id: i32,
+  pub email: String,
+  pub password_hash: String,
+}
+
+#[cfg(feature = "server")]
+#[derive(diesel::Insertable)]
+#[diesel(table_name = crate::api::db::schema::users)]
+pub struct NewUserRow<'a> {
+  pub email: &'a str,
+  pub password_hash: &'a str,
+}
+{% endif %}

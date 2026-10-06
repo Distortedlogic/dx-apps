@@ -9,9 +9,21 @@ serve platform:
 build platform:
     dx build --package {{ project_slug }} --platform {% raw %}{{ platform }}{% endraw %}
 
-check platform:
-    dx check --package {{ project_slug }} --platform {% raw %}{{ platform }}{% endraw %}{% if fullstack %} --fullstack{% endif %}
+tailwind-check:
+    pnpm exec tailwindcss -i apps/{{ project_slug }}/tailwind.css -o /dev/null
 
+check platform: tailwind-check
+    dx check --package {{ project_slug }} --platform {% raw %}{{ platform }}{% endraw %}{% if fullstack %} --fullstack{% endif %}
+{% if "database" in capabilities %}
+migrate:
+    diesel migration run
+
+migrate-revert:
+    diesel migration revert
+
+migration-gen name:
+    diesel migration generate {% raw %}{{ name }}{% endraw %}
+{% endif %}
 format:
     cargo fmt --all -- --check
 
