@@ -1,6 +1,7 @@
 use crate::router::Route;
 use dioxus::prelude::*;
-
+{% if "charting" in capabilities %}use dx_charming::ChartAssets;
+{% endif %}
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 
 #[component]
@@ -8,6 +9,7 @@ pub fn App() -> Element {
   rsx! {
     document::Title { {{ project_name | tojson }} }
     document::Stylesheet { href: TAILWIND_CSS }
-    Router::<Route> {}
+{% if "charting" in capabilities %}    ChartAssets {}
+{% endif %}    Router::<Route> {}
   }
 }
